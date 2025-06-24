@@ -1,0 +1,25 @@
+{
+  "last_crawl": "2025-06-24 13:18:36 (パリ時間)",
+  "total_institutions": 3,
+  "successful_crawls": 2,
+  "results": [
+    {
+      "institution": "EBA",
+      "publication": "ESEP",
+      "status": "⚠️ コンテンツ未確認",
+      "crawled_at": "2025-06-24 13:18:36 (パリ時間)"
+    },
+    {
+      "institution": "IMF",
+      "publication": "World Economic Outlook",
+      "status": "✅ 接続成功",
+      "crawled_at": "2025-06-24 13:18:36 (パリ時間)"
+    },
+    {
+      "institution": "OECD",
+      "publication": "Economic Outlook",
+      "status": "❌ HTTP 403",
+      "crawled_at": "2025-06-24 13:18:36 (パリ時間)"
+    }
+  ]
+}
