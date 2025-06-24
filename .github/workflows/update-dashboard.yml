@@ -1,4 +1,13 @@
-name: Update Publications Dashboard
+# IEA
+            {
+                'name': 'IEA',
+                'publications': [
+                    {
+                        'title': 'World Energy Outlook',
+                        'urls': [
+                            'https://www.iea.org/reports/world-energy-outlook-2024',
+                            'https://www.iea.org/analysis?type=report',
+                            'https://www.ieaname: Update Publications Dashboard
 
 on:
   schedule:
@@ -51,10 +60,14 @@ jobs:
         session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Accept-Encoding': 'gzip, deflate',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept-Encoding': 'gzip, deflate, br',
             'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1'
+            'Upgrade-Insecure-Requests': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Cache-Control': 'max-age=0'
         })
         
         def try_multiple_urls(urls, title, institution):
@@ -170,20 +183,20 @@ jobs:
                     {
                         'title': 'Economic Outlook',
                         'urls': [
-                            'https://www.oecd.org/economic-outlook/',
-                            'https://www.oecd.org/economy/outlook/',
-                            'https://www.oecd-ilibrary.org/economics/oecd-economic-outlook_16097408'
+                            'https://www.oecd.org/en/publications/serials/oecd-economic-outlook_g1ghgh13.html',
+                            'https://www.oecd.org/en/topics/economic-outlook.html',
+                            'https://www.oecd.org/economic-outlook/'
                         ],
-                        'search_terms': ['economic outlook', 'growth projections', 'global economy', 'economic forecast']
+                        'search_terms': ['economic outlook', 'latest publications', 'growth projections', 'global economy']
                     },
                     {
                         'title': 'Interim Economic Outlook',
                         'urls': [
-                            'https://www.oecd.org/economic-outlook/',
-                            'https://www.oecd.org/economy/',
-                            'https://www.oecd.org/newsroom/'
+                            'https://www.oecd.org/en/publications/serials/oecd-economic-outlook_g1ghgh13.html',
+                            'https://www.oecd.org/en/publications/oecd-economic-outlook-interim-report-march-2025_89af4857-en.html',
+                            'https://www.oecd.org/en/topics/economic-outlook.html'
                         ],
-                        'search_terms': ['interim economic outlook', 'interim outlook', 'economic update']
+                        'search_terms': ['interim economic outlook', 'latest publications', 'interim outlook', 'march 2025']
                     }
                 ]
             },
@@ -266,11 +279,11 @@ jobs:
                     {
                         'title': 'World Economic Outlook',
                         'urls': [
+                            'https://www.imf.org/en/Publications/WEO/Issues/2025/04/22/world-economic-outlook-april-2025',
                             'https://www.imf.org/en/Publications/WEO',
-                            'https://www.imf.org/en/Research/outlook/weo',
-                            'https://www.imf.org/external/pubs/ft/weo/'
+                            'https://www.imf.org/en/Research/outlook/weo'
                         ],
-                        'search_terms': ['world economic outlook', 'weo', 'global growth forecast']
+                        'search_terms': ['world economic outlook', 'weo', 'global growth forecast', 'april 2025']
                     },
                     {
                         'title': 'Global Financial Stability Report',
@@ -299,20 +312,20 @@ jobs:
                     {
                         'title': 'World Energy Outlook',
                         'urls': [
+                            'https://www.iea.org/analysis?type=report',
                             'https://www.iea.org/reports/world-energy-outlook-2024',
-                            'https://www.iea.org/weo',
-                            'https://www.iea.org/reports/world-energy-outlook'
+                            'https://www.iea.org/weo'
                         ],
-                        'search_terms': ['world energy outlook', 'weo', 'energy scenarios']
+                        'search_terms': ['world energy outlook', 'weo', 'energy scenarios', 'age of electricity', '2024']
                     },
                     {
                         'title': 'Global Energy Review',
                         'urls': [
+                            'https://www.iea.org/analysis?type=report',
                             'https://www.iea.org/reports/global-energy-review-2025',
-                            'https://www.iea.org/reports/global-energy-review',
-                            'https://www.iea.org/data-and-statistics/data-tools/global-energy-review'
+                            'https://www.iea.org/reports/global-energy-review'
                         ],
-                        'search_terms': ['global energy review', 'energy statistics', 'co2 emissions']
+                        'search_terms': ['global energy review', 'energy statistics', 'co2 emissions', 'energy data', '2025']
                     }
                 ]
             },
