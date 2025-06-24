@@ -1,40 +1,29 @@
 name: Update Publications Dashboard
 
 on:
-  schedule:
-    - cron: '0 5 * * *'
   workflow_dispatch:
 
 jobs:
-  update-dashboard:
+  test-update:
     runs-on: ubuntu-latest
     
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
-    
     steps:
-    - name: Checkout repository
+    - name: Checkout
       uses: actions/checkout@v3
       
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-        
-    - name: Install dependencies
+    - name: Test update
       run: |
-        pip install -r requirements.txt
+        echo "Testing update..."
         
-    - name: Run crawler and update HTML
-      run: |
-        python crawler.py
+        # 最終更新時刻のみ更新
+        sed -i 's/{{LAST_UPDATE_TIME}}/'"$(date '+%Y-%m-%d %H:%M:%S (パリ時間)')"'/g' index.html
+        
+        echo "Update completed successfully"
         
     - name: Commit changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add index.html publications_data.json
-        git diff --staged --quiet || git commit -m "🤖 Auto-update dashboard $(date)"
+        git add index.html
+        git diff --staged --quiet || git commit -m "🤖 Test update"
         git push
