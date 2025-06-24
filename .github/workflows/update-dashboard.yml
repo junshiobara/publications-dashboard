@@ -9,7 +9,7 @@ on:
 jobs:
   crawl-and-update:
     runs-on: ubuntu-latest
-    timeout-minutes: 30  # 30分でタイムアウト（機関数が多いため）
+    timeout-minutes: 45  # より長めのタイムアウト
     
     permissions:
       contents: write
@@ -25,34 +25,95 @@ jobs:
         
     - name: Install dependencies
       run: |
-        pip install requests beautifulsoup4 pytz lxml feedparser
+        pip install requests beautifulsoup4 pytz lxml feedparser dateparser
         
-    - name: Run comprehensive crawler
+    - name: Run enhanced crawler
       run: |
         python3 -c "
         import requests
         import json
         import re
-        from datetime import datetime
+        from datetime import datetime, timedelta
         from bs4 import BeautifulSoup
         import pytz
         import time
         import sys
-        import feedparser
+        import dateparser
         
         # パリ時間設定
         paris_tz = pytz.timezone('Europe/Paris')
         current_time = datetime.now(paris_tz).strftime('%Y-%m-%d %H:%M:%S (パリ時間)')
         
-        print(f'🚀 クローリング開始: {current_time}')
+        print(f'🚀 改良版クローリング開始: {current_time}')
         
         # 安全なクローリング設定
         session = requests.Session()
         session.headers.update({
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Encoding': 'gzip, deflate',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1'
         })
         
-        # Excelファイルに基づく完全な機関リスト
+        def try_multiple_urls(urls, title, institution):
+            '''複数のURLを試す'''
+            for url in urls:
+                try:
+                    print(f'    🔗 試行中: {url}')
+                    response = session.get(url, timeout=20)
+                    if response.status_code == 200:
+                        print(f'    ✅ 成功: {url}')
+                        return response, url
+                    else:
+                        print(f'    ❌ HTTP {response.status_code}: {url}')
+                except Exception as e:
+                    print(f'    ❌ エラー {url}: {str(e)[:50]}')
+                    continue
+            return None, None
+        
+        def extract_dates_enhanced(text, soup):
+            '''強化された日付抽出'''
+            dates = []
+            
+            # 複数の日付パターン
+            patterns = [
+                r'20[2-9][0-9][-/\.][0-1]?[0-9][-/\.][0-3]?[0-9]',  # 2025-06-24, 2025/6/24
+                r'[0-3]?[0-9][-/\.][0-1]?[0-9][-/\.]20[2-9][0-9]',   # 24-06-2025, 24/6/2025
+                r'[A-Za-z]+ [0-3]?[0-9], 20[2-9][0-9]',             # June 24, 2025
+                r'[0-3]?[0-9] [A-Za-z]+ 20[2-9][0-9]',              # 24 June 2025
+                r'20[2-9][0-9]年[0-1]?[0-9]月[0-3]?[0-9]日'          # 2025年6月24日
+            ]
+            
+            for pattern in patterns:
+                found = re.findall(pattern, text)
+                dates.extend(found)
+            
+            # HTMLから特定のタグの日付も抽出
+            if soup:
+                for tag in soup.find_all(['time', 'span', 'div'], class_=re.compile(r'date|time|publish', re.I)):
+                    if tag.get_text():
+                        dates.append(tag.get_text().strip())
+            
+            # 重複除去と最新日付選択
+            if dates:
+                valid_dates = []
+                for d in dates:
+                    try:
+                        parsed = dateparser.parse(d)
+                        if parsed and parsed.year >= 2020:
+                            valid_dates.append(parsed)
+                    except:
+                        continue
+                
+                if valid_dates:
+                    latest = max(valid_dates)
+                    return latest.strftime('%Y-%m-%d')
+            
+            return None
+        
+        # 正確で現実的な機関リスト
         institutions = [
             # イタリア中央銀行
             {
@@ -60,13 +121,21 @@ jobs:
                 'publications': [
                     {
                         'title': 'Financial Stability Report',
-                        'url': 'https://www.bancaditalia.it/pubblicazioni/rapporto-stabilita/',
-                        'search_terms': ['financial stability', 'rapporto stabilità', 'stability report']
+                        'urls': [
+                            'https://www.bancaditalia.it/pubblicazioni/rapporto-stabilita/index.html',
+                            'https://www.bancaditalia.it/en/publications/financial-stability-report/',
+                            'https://www.bancaditalia.it/pubblicazioni/rapporto-stabilita/'
+                        ],
+                        'search_terms': ['financial stability', 'rapporto stabilità finanziaria', 'stabilità', 'rischio sistemico']
                     },
                     {
                         'title': 'Macroeconomic Projections',
-                        'url': 'https://www.bancaditalia.it/pubblicazioni/bollettino-economico/',
-                        'search_terms': ['macroeconomic projections', 'proiezioni macroeconomiche', 'bollettino economico']
+                        'urls': [
+                            'https://www.bancaditalia.it/pubblicazioni/bollettino-economico/index.html',
+                            'https://www.bancaditalia.it/en/publications/economic-bulletin/',
+                            'https://www.bancaditalia.it/pubblicazioni/bollettino-economico/'
+                        ],
+                        'search_terms': ['bollettino economico', 'previsioni macroeconomiche', 'proiezioni', 'economic bulletin']
                     }
                 ]
             },
@@ -76,13 +145,21 @@ jobs:
                 'publications': [
                     {
                         'title': 'Financial Stability Report',
-                        'url': 'https://www.bde.es/bde/en/secciones/informes/Publicaciones_an/Informe_de_Estab/',
-                        'search_terms': ['financial stability', 'estabilidad financiera', 'stability report']
+                        'urls': [
+                            'https://www.bde.es/bde/en/secciones/informes/Publicaciones_an/Informe_de_Estab/',
+                            'https://www.bde.es/wbe/en/publicaciones/informes/informe-estabilidad-financiera/',
+                            'https://www.bde.es/wbe/es/publicaciones/informes/informe-estabilidad-financiera/'
+                        ],
+                        'search_terms': ['financial stability', 'estabilidad financiera', 'informe de estabilidad', 'IEF']
                     },
                     {
                         'title': 'Macroeconomic Projections',
-                        'url': 'https://www.bde.es/bde/en/secciones/informes/Publicaciones_an/Boletin_Economico/',
-                        'search_terms': ['macroeconomic projections', 'proyecciones macroeconómicas']
+                        'urls': [
+                            'https://www.bde.es/bde/en/secciones/informes/Publicaciones_an/Boletin_Economico/',
+                            'https://www.bde.es/wbe/en/publicaciones/informes/boletin-economico/',
+                            'https://www.bde.es/wbe/es/publicaciones/informes/boletin-economico/'
+                        ],
+                        'search_terms': ['macroeconomic projections', 'proyecciones macroeconómicas', 'boletín económico']
                     }
                 ]
             },
@@ -92,13 +169,21 @@ jobs:
                 'publications': [
                     {
                         'title': 'Economic Outlook',
-                        'url': 'https://www.oecd.org/en/publications/oecd-economic-outlook-16097408.html',
-                        'search_terms': ['economic outlook', 'interim economic outlook']
+                        'urls': [
+                            'https://www.oecd.org/economic-outlook/',
+                            'https://www.oecd.org/economy/outlook/',
+                            'https://www.oecd-ilibrary.org/economics/oecd-economic-outlook_16097408'
+                        ],
+                        'search_terms': ['economic outlook', 'growth projections', 'global economy', 'economic forecast']
                     },
                     {
                         'title': 'Interim Economic Outlook',
-                        'url': 'https://www.oecd.org/en/publications/',
-                        'search_terms': ['interim economic outlook', 'economic outlook']
+                        'urls': [
+                            'https://www.oecd.org/economic-outlook/',
+                            'https://www.oecd.org/economy/',
+                            'https://www.oecd.org/newsroom/'
+                        ],
+                        'search_terms': ['interim economic outlook', 'interim outlook', 'economic update']
                     }
                 ]
             },
@@ -108,23 +193,21 @@ jobs:
                 'publications': [
                     {
                         'title': 'Economic Forecast',
-                        'url': 'https://economy-finance.ec.europa.eu/economic-research-and-databases/economic-databases/economic-forecast_en',
-                        'search_terms': ['economic forecast', 'spring forecast', 'autumn forecast']
+                        'urls': [
+                            'https://economy-finance.ec.europa.eu/economic-forecast-and-surveys/economic-forecasts_en',
+                            'https://ec.europa.eu/economy_finance/eu/forecasts/index_en.htm',
+                            'https://economy-finance.ec.europa.eu/'
+                        ],
+                        'search_terms': ['economic forecast', 'spring forecast', 'autumn forecast', 'winter forecast']
                     },
                     {
-                        'title': 'European Semester Spring Package',
-                        'url': 'https://commission.europa.eu/business-economy-euro/economic-and-fiscal-policy-coordination/european-semester_en',
-                        'search_terms': ['european semester', 'spring package', 'country specific recommendations']
-                    },
-                    {
-                        'title': 'European Semester Autumn Package',
-                        'url': 'https://commission.europa.eu/business-economy-euro/economic-and-fiscal-policy-coordination/european-semester_en',
-                        'search_terms': ['european semester', 'autumn package', 'annual growth survey']
-                    },
-                    {
-                        'title': 'Guidance on Fiscal Policy',
-                        'url': 'https://economy-finance.ec.europa.eu/economic-and-fiscal-governance_en',
-                        'search_terms': ['fiscal policy', 'fiscal guidance', 'stability and growth pact']
+                        'title': 'European Semester',
+                        'urls': [
+                            'https://commission.europa.eu/business-economy-euro/economic-and-fiscal-policy-coordination/european-semester_en',
+                            'https://ec.europa.eu/eurostat/web/european-semester/',
+                            'https://economy-finance.ec.europa.eu/economic-and-fiscal-governance/european-semester_en'
+                        ],
+                        'search_terms': ['european semester', 'country specific recommendations', 'spring package', 'autumn package']
                     }
                 ]
             },
@@ -134,13 +217,21 @@ jobs:
                 'publications': [
                     {
                         'title': 'Financial Stability Report',
-                        'url': 'https://www.banque-france.fr/en/publications-and-statistics/publications/financial-stability-report',
-                        'search_terms': ['financial stability', 'rapport stabilité financière']
+                        'urls': [
+                            'https://www.banque-france.fr/en/financial-stability',
+                            'https://www.banque-france.fr/en/publications/financial-stability-report',
+                            'https://www.banque-france.fr/stabilite-financiere'
+                        ],
+                        'search_terms': ['financial stability', 'stabilité financière', 'rapport stabilité']
                     },
                     {
                         'title': 'Macroeconomic Projections',
-                        'url': 'https://www.banque-france.fr/en/publications-and-statistics/publications/macroeconomic-projections',
-                        'search_terms': ['macroeconomic projections', 'projections macroéconomiques']
+                        'urls': [
+                            'https://www.banque-france.fr/en/economics/macroeconomic-projections',
+                            'https://www.banque-france.fr/economie/projections-macroeconomiques',
+                            'https://www.banque-france.fr/en/publications'
+                        ],
+                        'search_terms': ['macroeconomic projections', 'projections macroéconomiques', 'prévisions']
                     }
                 ]
             },
@@ -150,13 +241,21 @@ jobs:
                 'publications': [
                     {
                         'title': 'ESEP',
-                        'url': 'https://www.eba.europa.eu/risk-analysis-and-data/european-supervisory-examination-programme-esep',
-                        'search_terms': ['esep', 'european supervisory examination programme', 'supervisory examination']
+                        'urls': [
+                            'https://www.eba.europa.eu/supervisory-convergence/supervisory-examination-programme',
+                            'https://www.eba.europa.eu/about-us/work-programme',
+                            'https://www.eba.europa.eu/publications'
+                        ],
+                        'search_terms': ['supervisory examination programme', 'esep', 'supervisory priorities']
                     },
                     {
                         'title': 'EU-wide Stress Test',
-                        'url': 'https://www.eba.europa.eu/risk-analysis-and-data/eu-wide-stress-testing',
-                        'search_terms': ['stress test', 'eu-wide stress test', 'banking stress test']
+                        'urls': [
+                            'https://www.eba.europa.eu/risk-analysis-and-data/eu-wide-stress-testing',
+                            'https://www.eba.europa.eu/risk-analysis-and-data/stress-testing',
+                            'https://www.eba.europa.eu/publications/stress-test-results'
+                        ],
+                        'search_terms': ['stress test', 'eu-wide stress test', 'stress testing exercise']
                     }
                 ]
             },
@@ -166,18 +265,30 @@ jobs:
                 'publications': [
                     {
                         'title': 'World Economic Outlook',
-                        'url': 'https://www.imf.org/en/Publications/WEO',
-                        'search_terms': ['world economic outlook', 'weo', 'global growth']
+                        'urls': [
+                            'https://www.imf.org/en/Publications/WEO',
+                            'https://www.imf.org/en/Research/outlook/weo',
+                            'https://www.imf.org/external/pubs/ft/weo/'
+                        ],
+                        'search_terms': ['world economic outlook', 'weo', 'global growth forecast']
                     },
                     {
                         'title': 'Global Financial Stability Report',
-                        'url': 'https://www.imf.org/en/Publications/GFSR',
-                        'search_terms': ['global financial stability', 'gfsr', 'financial stability']
+                        'urls': [
+                            'https://www.imf.org/en/Publications/GFSR',
+                            'https://www.imf.org/en/Research/Publications/GFSR',
+                            'https://www.imf.org/external/pubs/ft/gfsr/'
+                        ],
+                        'search_terms': ['global financial stability', 'gfsr', 'financial stability report']
                     },
                     {
                         'title': 'Fiscal Monitor',
-                        'url': 'https://www.imf.org/en/Publications/FM',
-                        'search_terms': ['fiscal monitor', 'public finances', 'fiscal policy']
+                        'urls': [
+                            'https://www.imf.org/en/Publications/FM',
+                            'https://www.imf.org/en/Research/Publications/FM',
+                            'https://www.imf.org/external/pubs/ft/fm/'
+                        ],
+                        'search_terms': ['fiscal monitor', 'public debt', 'fiscal policy']
                     }
                 ]
             },
@@ -187,46 +298,61 @@ jobs:
                 'publications': [
                     {
                         'title': 'World Energy Outlook',
-                        'url': 'https://www.iea.org/reports/world-energy-outlook-2024',
-                        'search_terms': ['world energy outlook', 'weo', 'energy outlook']
+                        'urls': [
+                            'https://www.iea.org/reports/world-energy-outlook-2024',
+                            'https://www.iea.org/weo',
+                            'https://www.iea.org/reports/world-energy-outlook'
+                        ],
+                        'search_terms': ['world energy outlook', 'weo', 'energy scenarios']
                     },
                     {
                         'title': 'Global Energy Review',
-                        'url': 'https://www.iea.org/reports/global-energy-review-2025',
-                        'search_terms': ['global energy review', 'energy review', 'energy data']
+                        'urls': [
+                            'https://www.iea.org/reports/global-energy-review-2025',
+                            'https://www.iea.org/reports/global-energy-review',
+                            'https://www.iea.org/data-and-statistics/data-tools/global-energy-review'
+                        ],
+                        'search_terms': ['global energy review', 'energy statistics', 'co2 emissions']
                     }
                 ]
             },
-            # 格付け機関 - Moody's
+            # 格付け機関（簡易版）
             {
                 'name': 'Moody\'s',
                 'publications': [
                     {
-                        'title': 'Sovereign Ratings (Portugal, Italy, Spain, France)',
-                        'url': 'https://www.moodys.com/research-and-ratings/market-segment/sovereign-supranational/-/005005/005005/-/-1/0/-/0/-/-/-/-/-/-/en/global/rra',
-                        'search_terms': ['sovereign rating', 'portugal', 'italy', 'spain', 'france', 'rating action']
+                        'title': 'Sovereign Ratings',
+                        'urls': [
+                            'https://www.moodys.com/research/sovereigns',
+                            'https://www.moodys.com/research-and-ratings/sovereigns'
+                        ],
+                        'search_terms': ['sovereign', 'rating', 'portugal', 'italy', 'spain', 'france']
                     }
                 ]
             },
-            # 格付け機関 - S&P
             {
                 'name': 'S&P',
                 'publications': [
                     {
-                        'title': 'Sovereign Ratings (Portugal, Italy, Spain, France)',
-                        'url': 'https://www.spglobal.com/ratings/en/research-insights/topics/sovereigns',
-                        'search_terms': ['sovereign rating', 'portugal', 'italy', 'spain', 'france', 'rating action']
+                        'title': 'Sovereign Ratings',
+                        'urls': [
+                            'https://www.spglobal.com/ratings/en/research-insights/sovereigns',
+                            'https://www.spglobal.com/ratings/en/sector/governments/sovereigns'
+                        ],
+                        'search_terms': ['sovereign', 'rating', 'portugal', 'italy', 'spain', 'france']
                     }
                 ]
             },
-            # 格付け機関 - Fitch
             {
                 'name': 'Fitch',
                 'publications': [
                     {
-                        'title': 'Sovereign Ratings (Portugal, Italy, Spain, France)',
-                        'url': 'https://www.fitchratings.com/research/sovereigns',
-                        'search_terms': ['sovereign rating', 'portugal', 'italy', 'spain', 'france', 'rating action']
+                        'title': 'Sovereign Ratings',
+                        'urls': [
+                            'https://www.fitchratings.com/sovereigns',
+                            'https://www.fitchratings.com/research/sovereigns'
+                        ],
+                        'search_terms': ['sovereign', 'rating', 'portugal', 'italy', 'spain', 'france']
                     }
                 ]
             }
@@ -242,66 +368,65 @@ jobs:
             print(f'\\n🏛️  {inst[\"name\"]} をクローリング中...')
             
             for pub in inst['publications']:
-                try:
-                    print(f'  📄 {pub[\"title\"]} を確認中...')
-                    
-                    # タイムアウト付きリクエスト
-                    response = session.get(pub['url'], timeout=15)
-                    
-                    if response.status_code == 200:
+                print(f'  📄 {pub[\"title\"]} を確認中...')
+                
+                # 複数URLを試行
+                response, successful_url = try_multiple_urls(pub['urls'], pub['title'], inst['name'])
+                
+                if response:
+                    try:
                         soup = BeautifulSoup(response.content, 'html.parser')
                         
                         # 検索語でコンテンツを確認
                         found_content = False
                         found_terms = []
+                        text_content = response.text.lower()
+                        
                         for term in pub['search_terms']:
-                            if term.lower() in response.text.lower():
+                            if term.lower() in text_content:
                                 found_content = True
                                 found_terms.append(term)
                         
-                        # 最新の日付を探す
-                        date_pattern = r'20[2-9][0-9][-/][0-1][0-9][-/][0-3][0-9]'
-                        dates = re.findall(date_pattern, response.text)
-                        latest_date = max(dates) if dates else None
+                        # 強化された日付抽出
+                        latest_date = extract_dates_enhanced(response.text, soup)
                         
                         results.append({
                             'institution': inst['name'],
                             'publication': pub['title'],
-                            'url': pub['url'],
+                            'url': successful_url,
                             'status': '✅ 接続成功' if found_content else '⚠️ コンテンツ未確認',
-                            'found_terms': found_terms,
+                            'found_terms': found_terms[:3],  # 最初の3つまで
                             'latest_date_found': latest_date,
                             'crawled_at': current_time
                         })
                         
                         if found_content:
                             success_count += 1
-                            print(f'    ✅ 成功 (検出語: {found_terms[:2]})')
+                            print(f'    ✅ 成功 (検出語: {found_terms[:2]}) | 最新日付: {latest_date or \"なし\"}')
                         else:
-                            print(f'    ⚠️  接続はできたが内容未確認')
-                    else:
+                            print(f'    ⚠️  接続はできたが内容未確認 | 最新日付: {latest_date or \"なし\"}')
+                    
+                    except Exception as e:
                         results.append({
                             'institution': inst['name'],
                             'publication': pub['title'],
-                            'url': pub['url'],
-                            'status': f'❌ HTTP {response.status_code}',
+                            'url': successful_url,
+                            'status': f'❌ 解析エラー: {str(e)[:50]}',
                             'crawled_at': current_time
                         })
-                        print(f'    ❌ 失敗: HTTP {response.status_code}')
-                    
-                    # レート制限：各リクエスト間に2秒待機
-                    time.sleep(2)
-                    
-                except Exception as e:
+                        print(f'    ❌ 解析エラー: {e}')
+                else:
                     results.append({
                         'institution': inst['name'],
                         'publication': pub['title'],
-                        'url': pub['url'],
-                        'status': f'❌ エラー: {str(e)[:100]}',
+                        'url': pub['urls'][0],
+                        'status': '❌ 全URLで接続失敗',
                         'crawled_at': current_time
                     })
-                    print(f'    ❌ エラー: {e}')
-                    continue
+                    print(f'    ❌ 全URLで接続失敗')
+                
+                # レート制限：各リクエスト間に3秒待機
+                time.sleep(3)
         
         # 結果保存
         final_results = {
@@ -337,7 +462,7 @@ jobs:
           echo "❌ index.html が見つかりません"
         fi
         
-    - name: Generate detailed report
+    - name: Generate enhanced report
       run: |
         # クローリング結果から詳細レポートを生成
         python3 -c "
@@ -348,7 +473,8 @@ jobs:
             with open('crawl_results.json', 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
-            print('\\n📊 詳細レポート')
+            print('\\n📊 改良版クローリング結果レポート')
+            print('=' * 50)
             print(f'最終実行: {data[\"last_crawl\"]}')
             print(f'成功率: {data.get(\"success_rate\", \"N/A\")}')
             print(f'総機関数: {data[\"total_institutions\"]}')
@@ -360,14 +486,30 @@ jobs:
             for result in data['results']:
                 inst = result['institution']
                 if inst not in institutions:
-                    institutions[inst] = {'success': 0, 'total': 0}
+                    institutions[inst] = {'success': 0, 'total': 0, 'details': []}
                 institutions[inst]['total'] += 1
+                institutions[inst]['details'].append({
+                    'pub': result['publication'],
+                    'status': result['status'],
+                    'date': result.get('latest_date_found')
+                })
                 if '✅' in result['status']:
                     institutions[inst]['success'] += 1
             
             for inst, stats in institutions.items():
                 rate = (stats['success']/stats['total'])*100
-                print(f'  {inst}: {stats[\"success\"]}/{stats[\"total\"]} ({rate:.0f}%)')
+                print(f'\\n  🏛️  {inst}: {stats[\"success\"]}/{stats[\"total\"]} ({rate:.0f}%)')
+                for detail in stats['details']:
+                    status_icon = '✅' if '✅' in detail['status'] else '❌' if '❌' in detail['status'] else '⚠️'
+                    date_info = f' | {detail[\"date\"]}' if detail['date'] else ''
+                    print(f'    {status_icon} {detail[\"pub\"]}{date_info}')
+            
+            # 最新日付のあるもの
+            print('\\n📅 最新日付が検出された公表物:')
+            recent_pubs = [r for r in data['results'] if r.get('latest_date_found')]
+            recent_pubs.sort(key=lambda x: x.get('latest_date_found', ''), reverse=True)
+            for pub in recent_pubs[:10]:
+                print(f'  📄 {pub[\"institution\"]} - {pub[\"publication\"]}: {pub[\"latest_date_found\"]}')
             
         except Exception as e:
             print(f'レポート生成エラー: {e}')
@@ -380,8 +522,10 @@ jobs:
         
         # 変更があるかチェック
         if [ -n "$(git status --porcelain)" ]; then
+          PARIS_TIME=$(TZ='Europe/Paris' date '+%Y-%m-%d %H:%M')
+          SUCCESS_RATE=$(cat crawl_results.json | jq -r '.success_rate // "N/A"')
           git add index.html crawl_results.json
-          git commit -m "🤖 自動更新: $(TZ='Europe/Paris' date '+%Y-%m-%d %H:%M') | $(cat crawl_results.json | jq -r '.success_rate // \"N/A\"') 成功率"
+          git commit -m "🤖 改良版自動更新: ${PARIS_TIME} | ${SUCCESS_RATE} 成功率"
           git push
           echo "✅ 変更をプッシュしました"
         else
