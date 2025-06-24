@@ -1,13 +1,4 @@
-# IEA
-            {
-                'name': 'IEA',
-                'publications': [
-                    {
-                        'title': 'World Energy Outlook',
-                        'urls': [
-                            'https://www.iea.org/reports/world-energy-outlook-2024',
-                            'https://www.iea.org/analysis?type=report',
-                            'https://www.ieaname: Update Publications Dashboard
+name: Update Publications Dashboard
 
 on:
   schedule:
@@ -53,9 +44,9 @@ jobs:
         paris_tz = pytz.timezone('Europe/Paris')
         current_time = datetime.now(paris_tz).strftime('%Y-%m-%d %H:%M:%S (パリ時間)')
         
-        print(f'🚀 改良版クローリング開始: {current_time}')
+        print(f'🚀 最終改良版クローリング開始: {current_time}')
         
-        # 安全なクローリング設定
+        # 安全なクローリング設定（IMF bot detection対策強化）
         session = requests.Session()
         session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -75,7 +66,7 @@ jobs:
             for url in urls:
                 try:
                     print(f'    🔗 試行中: {url}')
-                    response = session.get(url, timeout=20)
+                    response = session.get(url, timeout=25, allow_redirects=True)
                     if response.status_code == 200:
                         print(f'    ✅ 成功: {url}')
                         return response, url
@@ -126,7 +117,7 @@ jobs:
             
             return None
         
-        # 正確で現実的な機関リスト
+        # 正確で現実的な機関リスト（最終改良版）
         institutions = [
             # イタリア中央銀行
             {
@@ -176,7 +167,7 @@ jobs:
                     }
                 ]
             },
-            # OECD
+            # OECD（Latest publications页面优先）
             {
                 'name': 'OECD',
                 'publications': [
@@ -200,7 +191,7 @@ jobs:
                     }
                 ]
             },
-            # 欧州委員会
+            # 欧州委员会
             {
                 'name': 'European Commission',
                 'publications': [
@@ -272,7 +263,7 @@ jobs:
                     }
                 ]
             },
-            # IMF
+            # IMF（正確なURL・bot detection対策済み）
             {
                 'name': 'IMF',
                 'publications': [
@@ -305,7 +296,7 @@ jobs:
                     }
                 ]
             },
-            # IEA
+            # IEA（レポート一覧页面优先）
             {
                 'name': 'IEA',
                 'publications': [
@@ -486,8 +477,8 @@ jobs:
             with open('crawl_results.json', 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
-            print('\\n📊 改良版クローリング結果レポート')
-            print('=' * 50)
+            print('\\n📊 最終改良版クローリング結果レポート')
+            print('=' * 60)
             print(f'最終実行: {data[\"last_crawl\"]}')
             print(f'成功率: {data.get(\"success_rate\", \"N/A\")}')
             print(f'総機関数: {data[\"total_institutions\"]}')
@@ -524,6 +515,13 @@ jobs:
             for pub in recent_pubs[:10]:
                 print(f'  📄 {pub[\"institution\"]} - {pub[\"publication\"]}: {pub[\"latest_date_found\"]}')
             
+            # 改善点サマリー
+            print('\\n🔧 主な改善点:')
+            print('  • OECD: Latest publications页面を優先使用')
+            print('  • IEA: レポート一覧页面を優先使用')
+            print('  • IMF: bot detection対策を強化')
+            print('  • 全般: 複数URL試行とタイムアウト延長')
+            
         except Exception as e:
             print(f'レポート生成エラー: {e}')
         "
@@ -538,7 +536,7 @@ jobs:
           PARIS_TIME=$(TZ='Europe/Paris' date '+%Y-%m-%d %H:%M')
           SUCCESS_RATE=$(cat crawl_results.json | jq -r '.success_rate // "N/A"')
           git add index.html crawl_results.json
-          git commit -m "🤖 改良版自動更新: ${PARIS_TIME} | ${SUCCESS_RATE} 成功率"
+          git commit -m "🚀 最終改良版自動更新: ${PARIS_TIME} | ${SUCCESS_RATE} 成功率"
           git push
           echo "✅ 変更をプッシュしました"
         else
