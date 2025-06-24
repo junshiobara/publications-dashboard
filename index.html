@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>36機関公表物監視ダッシュボード</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background-color: #ffffff; 
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 1800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        h1 { 
+            color: #333; 
+            text-align: center; 
+            margin-bottom: 10px;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .info-bar {
+            background: #f8f9fa;
+            padding: 15px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .last-update {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-size: 0.85em;
+        }
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 8px; 
+            text-align: left; 
+        }
+        th { 
+            background-color: #f5f5f5; 
+            font-weight: bold;
+            color: #333;
+            position: sticky;
+            top: 0;
+            font-size: 0.8em;
+        }
+        tr:nth-child(even) { 
+            background-color: #f9f9f9; 
+        }
+        tr:hover { 
+            background-color: #f0f0f0; 
+        }
+        .institution-cell {
+            font-weight: bold;
+            color: #2563eb;
+        }
+        .note {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            font-size: 0.9em;
+            color: #666;
+            border-radius: 5px;
+        }
+        .github-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .github-link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .github-link a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 1400px) {
+            .container {
+                padding: 10px;
+            }
+            table {
+                font-size: 0.75em;
+            }
+            th, td {
+                padding: 6px 4px;
+            }
+        }
+        .highlighted {
+            background-color: #dbeafe !important;
+            border-left: 4px solid #2563eb !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 36機関公表物監視ダッシュボード</h1>
+        <p class="subtitle">36の重要公表物を次回更新日順で監視</p>
+        
+        <div class="info-bar">
+            <strong>監視対象:</strong> 36の重要公表物 |
+            <strong>更新:</strong> 毎朝パリ時間7時に自動更新
+            <div class="last-update" id="lastUpdate">最終更新: {{LAST_UPDATE_TIME}}</div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>機関</th>
+                    <th>公表物名</th>
+                    <th>頻度</th>
+                    <th>次回予測</th>
+                    <th>最新発行日</th>
+                    <th>最新タイトル</th>
+                    <th>前年同時期</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">1</td>
+                    <td class="institution-cell">EBA</td>
+                    <td><strong>ESEP</strong></td>
+                    <td>Annual</td>
+                    <td style="text-align: center;">2025年7月</td>
+                    <td style="text-align: center;">2024-07-08</td>
+                    <td>EBA ESEP Report 2024</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">2</td>
+                    <td class="institution-cell">EBA</td>
+                    <td><strong>EU-wide Stress Test</strong></td>
+                    <td>Bi-Annual</td>
+                    <td style="text-align: center;">2025年後半</td>
+                    <td style="text-align: center;">2023-07-28</td>
+                    <td>EU-wide Stress Test Results 2023</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">3</td>
+                    <td class="institution-cell">S&P</td>
+                    <td><strong>Portugal Sovereign Rating</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025-08-29</td>
+                    <td style="text-align: center;">2025-02-28</td>
+                    <td>Portugal Sovereign Rating Review</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">4</td>
+                    <td class="institution-cell">Banque de France</td>
+                    <td><strong>Macroeconomic Projections</strong></td>
+                    <td>Quarterly</td>
+                    <td style="text-align: center;">2025年9月</td>
+                    <td style="text-align: center;">-</td>
+                    <td>-</td>
+                    <td style="text-align: center;">2024-09-17</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">5</td>
+                    <td class="institution-cell">Banco de España</td>
+                    <td><strong>Macroeconomic Projections</strong></td>
+                    <td>Quarterly</td>
+                    <td style="text-align: center;">2025年9月</td>
+                    <td style="text-align: center;">-</td>
+                    <td>-</td>
+                    <td style="text-align: center;">2024-09-17</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">6</td>
+                    <td class="institution-cell">OECD</td>
+                    <td><strong>Interim Economic Outlook</strong></td>
+                    <td>Irregular</td>
+                    <td style="text-align: center;">2025年9月</td>
+                    <td style="text-align: center;">2025-03-17</td>
+                    <td>OECD Interim Economic Outlook, March 2025</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">7</td>
+                    <td class="institution-cell">S&P</td>
+                    <td><strong>Spain Sovereign Rating</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025-09-12</td>
+                    <td style="text-align: center;">2025-03-14</td>
+                    <td>Spain Sovereign Rating Update</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">8</td>
+                    <td class="institution-cell">Fitch</td>
+                    <td><strong>France Sovereign Rating</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025-09-12</td>
+                    <td style="text-align: center;">2025-03-14</td>
+                    <td>France Sovereign Rating Action</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">9</td>
+                    <td class="institution-cell">Fitch</td>
+                    <td><strong>Portugal Sovereign Rating</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025-09-12</td>
+                    <td style="text-align: center;">2025-03-14</td>
+                    <td>Portugal Sovereign Rating Review</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">10</td>
+                    <td class="institution-cell">Fitch</td>
+                    <td><strong>Italy Sovereign Rating</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025-09-19</td>
+                    <td style="text-align: center;">2025-04-04</td>
+                    <td>Italy Sovereign Rating Update</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">11</td>
+                    <td class="institution-cell">Fitch</td>
+                    <td><strong>Spain Sovereign Rating</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025-09-26</td>
+                    <td style="text-align: center;">2025-04-11</td>
+                    <td>Spain Sovereign Rating Action</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">12</td>
+                    <td class="institution-cell">Banca d'Italia</td>
+                    <td><strong>Macroeconomic Projections</strong></td>
+                    <td>Quarterly</td>
+                    <td style="text-align: center;">2025年10月</td>
+                    <td style="text-align: center;">-</td>
+                    <td>-</td>
+                    <td style="text-align: center;">2024-10-11</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">13</td>
+                    <td class="institution-cell">IMF</td>
+                    <td><strong>World Economic Outlook</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025年10月</td>
+                    <td style="text-align: center;">2025-04-22</td>
+                    <td>World Economic Outlook, April 2025</td>
+                    <td style="text-align: center;">2024-10-22</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">14</td>
+                    <td class="institution-cell">IMF</td>
+                    <td><strong>Global Financial Stability Report</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025年10月</td>
+                    <td style="text-align: center;">2025-04-22</td>
+                    <td>Global Financial Stability Report, April 2025</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">15</td>
+                    <td class="institution-cell">IMF</td>
+                    <td><strong>Fiscal Monitor</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025年10月</td>
+                    <td style="text-align: center;">2025-04-16</td>
+                    <td>Fiscal Monitor, April 2025</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">16</td>
+                    <td class="institution-cell">IEA</td>
+                    <td><strong>World Energy Outlook</strong></td>
+                    <td>Annual</td>
+                    <td style="text-align: center;">2025年10月</td>
+                    <td style="text-align: center;">2024-10-16</td>
+                    <td>World Energy Outlook 2024</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">17</td>
+                    <td class="institution-cell">S&P</td>
+                    <td><strong>Italy Sovereign Rating</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025-10-10</td>
+                    <td style="text-align: center;">2025-04-11</td>
+                    <td>Italy Sovereign Rating Review</td>
+                    <td style="text-align: center;">2024-04-19</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">18</td>
+                    <td class="institution-cell">Moody's</td>
+                    <td><strong>France Sovereign Rating</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025-10-24</td>
+                    <td style="text-align: center;">2025-04-11</td>
+                    <td>France Sovereign Rating Review</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">19</td>
+                    <td class="institution-cell">Banca d'Italia</td>
+                    <td><strong>Financial Stability Report</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025年11月</td>
+                    <td style="text-align: center;">2024-11-22</td>
+                    <td>Financial Stability Report, No. 2 - 2024</td>
+                    <td style="text-align: center;">2024-04-30</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">20</td>
+                    <td class="institution-cell">Banco de España</td>
+                    <td><strong>Financial Stability Report</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025年11月</td>
+                    <td style="text-align: center;">2024-11-05</td>
+                    <td>Financial Stability Report. Autumn 2024</td>
+                    <td style="text-align: center;">2024-04-15</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">21</td>
+                    <td class="institution-cell">Moody's</td>
+                    <td><strong>Portugal Sovereign Rating</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025-11-14</td>
+                    <td style="text-align: center;">-</td>
+                    <td>-</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">22</td>
+                    <td class="institution-cell">Moody's</td>
+                    <td><strong>Italy Sovereign Rating</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025-11-21</td>
+                    <td style="text-align: center;">-</td>
+                    <td>-</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">23</td>
+                    <td class="institution-cell">S&P</td>
+                    <td><strong>France Sovereign Rating</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025-11-28</td>
+                    <td style="text-align: center;">2025-02-28</td>
+                    <td>France Long-Term Rating Affirmed</td>
+                    <td style="text-align: center;">2024-05-31</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">24</td>
+                    <td class="institution-cell">OECD</td>
+                    <td><strong>Economic Outlook</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025年12月</td>
+                    <td style="text-align: center;">2024-12-04</td>
+                    <td>OECD Economic Outlook, Volume 2024 Issue 2</td>
+                    <td style="text-align: center;">2024-06-07</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">25</td>
+                    <td class="institution-cell">Banque de France</td>
+                    <td><strong>Financial Stability Report</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025年12月</td>
+                    <td style="text-align: center;">2024-12-23</td>
+                    <td>Financial stability report - December 2024</td>
+                    <td style="text-align: center;">2024-06-24</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">26</td>
+                    <td class="institution-cell">IEA</td>
+                    <td><strong>Global Energy Review</strong></td>
+                    <td>Annual</td>
+                    <td style="text-align: center;">2026年3月</td>
+                    <td style="text-align: center;">2025-03-24</td>
+                    <td>Global Energy Review 2025</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">27</td>
+                    <td class="institution-cell">European Commission</td>
+                    <td><strong>Economic Forecast</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2026年5月</td>
+                    <td style="text-align: center;">2024-11-15</td>
+                    <td>Autumn 2024 Economic Forecast</td>
+                    <td style="text-align: center;">2024-05-15</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">28</td>
+                    <td class="institution-cell">European Commission</td>
+                    <td><strong>European Semester Spring Package</strong></td>
+                    <td>Annual</td>
+                    <td style="text-align: center;">2026年6月</td>
+                    <td style="text-align: center;">2024-06-19</td>
+                    <td>European Semester Spring Package 2024</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">29</td>
+                    <td class="institution-cell">European Commission</td>
+                    <td><strong>European Semester Autumn Package</strong></td>
+                    <td>Annual</td>
+                    <td style="text-align: center;">2026年11月</td>
+                    <td style="text-align: center;">2024-11-26</td>
+                    <td>European Semester Autumn Package 2024</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">30</td>
+                    <td class="institution-cell">Moody's</td>
+                    <td><strong>Spain Sovereign Rating</strong></td>
+                    <td>Semi-Annual</td>
+                    <td style="text-align: center;">2025年11月</td>
+                    <td style="text-align: center;">-</td>
+                    <td>-</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold;">31</td>
+                    <td class="institution-cell">European Commission</td>
+                    <td><strong>Guidance on Fiscal Policy</strong></td>
+                    <td>Annual</td>
+                    <td style="text-align: center;">2026年3月</td>
+                    <td style="text-align: center;">2024-03-08</td>
+                    <td>Guidance on Fiscal Policy 2024</td>
+                    <td style="text-align: center;">-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="note">
+            <h3>📝 システム説明</h3>
+            
+            <p><strong>表示順序:</strong> 次回公表日が近い順に表示されます。公表時期を過ぎた場合は、次の公表予定日を調査して適切な位置に再配置されます。</p>
+            
+            <p><strong>次回公表日予測ロジック:</strong></p>
+            <ol>
+                <li><strong>クローリング結果が最優先</strong> - 各機関のウェブサイトに明記されている場合はその日付を使用</li>
+                <li><strong>不明確な場合は大まかな時期表記</strong> - 「2025年7月」「2025年後半」など</li>
+                <li><strong>パターン分析</strong> - 年次刊行物：前年同日、半期刊行物：前回から6ヶ月後、四半期刊行物：前回から3ヶ月後</li>
+                <li><strong>格付け機関</strong> - 専用スケジュールPDF（2025年版）に基づく</li>
+            </ol>
+            
+            <p><strong>データソース:</strong></p>
+            <ul>
+                <li>各機関の公式ウェブサイトから毎日自動取得（最優先）</li>
+                <li>格付け機関（Fitch, Moody's, S&P）のスケジュールは専用PDFを参照</li>
+            </ul>
+            
+            <p><strong>監視対象機関:</strong> Banca d'Italia, Banco de España, OECD, European Commission, Moody's, S&P, Fitch, Banque de France, EBA, IMF, IEA</p>
+        </div>
+        
+        <div class="github-link">
+            <a href="#" onclick="alert('システムソースコードは内部管理されています')">🔧 システム情報</a>
+        </div>
+    </div>
+
+    <script>
+        // 最終更新時刻の動的表示
+        document.addEventListener('DOMContentLoaded', function() {
+            // テンプレート変数が置換されていない場合は現在時刻を表示
+            const lastUpdateElement = document.getElementById('lastUpdate');
+            if (lastUpdateElement.textContent.includes('{{LAST_UPDATE_TIME}}')) {
+                const now = new Date();
+                const parisTime = now.toLocaleString('ja-JP', { 
+                    timeZone: 'Europe/Paris',
+                    year: 'numeric',
+                    month: '2-digit', 
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                lastUpdateElement.textContent = `最終更新: ${parisTime} (パリ時間)`;
+            }
+        });
+
+        // テーブル行のクリックでハイライト
+        document.querySelectorAll('table tbody tr').forEach(row => {
+            row.addEventListener('click', function() {
+                // 既存のハイライトを削除
+                document.querySelectorAll('table tbody tr').forEach(r => r.classList.remove('highlighted'));
+                // 新しいハイライトを追加
+                this.classList.add('highlighted');
+            });
+        });
+    </script>
+</body>
+</html>
