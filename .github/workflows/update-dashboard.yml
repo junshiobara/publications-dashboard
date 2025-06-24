@@ -2,13 +2,14 @@ name: Update Publications Dashboard
 
 on:
   schedule:
+    # 毎日パリ時間7:00（UTC 5:00）に自動実行
     - cron: '0 5 * * *'
   workflow_dispatch:
 
 jobs:
-  update-dashboard:
+  crawl-and-update:
     runs-on: ubuntu-latest
-    timeout-minutes: 10  # 10分でタイムアウト
+    timeout-minutes: 15  # 15分でタイムアウト
     
     permissions:
       contents: write
@@ -24,31 +25,143 @@ jobs:
         
     - name: Install dependencies
       run: |
-        pip install requests beautifulsoup4 pytz
+        pip install requests beautifulsoup4 pytz lxml
         
-    - name: Quick update with timestamp
+    - name: Run safe crawler
       run: |
-        echo "Updating dashboard timestamp..."
+        python3 -c "
+        import requests
+        import json
+        import re
+        from datetime import datetime
+        from bs4 import BeautifulSoup
+        import pytz
+        import time
+        import sys
         
-        # 現在時刻を取得（パリ時間）
+        # パリ時間設定
+        paris_tz = pytz.timezone('Europe/Paris')
+        current_time = datetime.now(paris_tz).strftime('%Y-%m-%d %H:%M:%S (パリ時間)')
+        
+        print(f'🚀 クローリング開始: {current_time}')
+        
+        # 安全なクローリング設定
+        session = requests.Session()
+        session.headers.update({
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        })
+        
+        # 簡単な機関リスト（段階的に拡張）
+        institutions = [
+            {
+                'name': 'EBA',
+                'url': 'https://www.eba.europa.eu/',
+                'publication': 'ESEP',
+                'search_terms': ['esep', 'supervisory review']
+            },
+            {
+                'name': 'IMF',
+                'url': 'https://www.imf.org/en/Publications',
+                'publication': 'World Economic Outlook',
+                'search_terms': ['world economic outlook', 'weo']
+            },
+            {
+                'name': 'OECD',
+                'url': 'https://www.oecd.org/en/publications/',
+                'publication': 'Economic Outlook',
+                'search_terms': ['economic outlook']
+            }
+        ]
+        
+        results = []
+        success_count = 0
+        
+        for inst in institutions:
+            try:
+                print(f'🔍 {inst[\"name\"]} をクローリング中...')
+                
+                # タイムアウト付きリクエスト
+                response = session.get(inst['url'], timeout=10)
+                if response.status_code == 200:
+                    soup = BeautifulSoup(response.content, 'html.parser')
+                    
+                    # 簡単な検索
+                    found_content = False
+                    for term in inst['search_terms']:
+                        if term.lower() in response.text.lower():
+                            found_content = True
+                            break
+                    
+                    results.append({
+                        'institution': inst['name'],
+                        'publication': inst['publication'],
+                        'status': '✅ 接続成功' if found_content else '⚠️ コンテンツ未確認',
+                        'crawled_at': current_time
+                    })
+                    success_count += 1
+                    print(f'✅ {inst[\"name\"]} 完了')
+                else:
+                    results.append({
+                        'institution': inst['name'],
+                        'publication': inst['publication'],
+                        'status': f'❌ HTTP {response.status_code}',
+                        'crawled_at': current_time
+                    })
+                    print(f'❌ {inst[\"name\"]} 失敗: HTTP {response.status_code}')
+                
+                # レート制限：各リクエスト間に3秒待機
+                time.sleep(3)
+                
+            except Exception as e:
+                results.append({
+                    'institution': inst['name'],
+                    'publication': inst['publication'],
+                    'status': f'❌ エラー: {str(e)[:50]}',
+                    'crawled_at': current_time
+                })
+                print(f'❌ {inst[\"name\"]} エラー: {e}')
+                continue
+        
+        # 結果保存
+        with open('crawl_results.json', 'w', encoding='utf-8') as f:
+            json.dump({
+                'last_crawl': current_time,
+                'total_institutions': len(institutions),
+                'successful_crawls': success_count,
+                'results': results
+            }, f, ensure_ascii=False, indent=2)
+        
+        print(f'📊 クローリング完了: {success_count}/{len(institutions)} 成功')
+        "
+        
+    - name: Update HTML dashboard
+      run: |
+        # HTMLファイルの最終更新時刻を更新
         PARIS_TIME=$(TZ='Europe/Paris' date '+%Y-%m-%d %H:%M:%S (パリ時間)')
         
-        # HTMLファイルの最終更新時刻を更新
         if [ -f "index.html" ]; then
+          # テンプレート変数を置換
           sed -i "s/{{LAST_UPDATE_TIME}}/$PARIS_TIME/g" index.html
+          
+          # 既存の更新時刻も置換
           sed -i "s/最終更新: [^<]*/最終更新: $PARIS_TIME/g" index.html
+          
+          echo "✅ HTMLダッシュボード更新完了"
+        else
+          echo "❌ index.html が見つかりません"
         fi
         
-        echo "Timestamp updated to: $PARIS_TIME"
-        
-    - name: Commit changes
+    - name: Commit and push changes
       run: |
         git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add index.html
-        if git diff --staged --quiet; then
-          echo "No changes to commit"
-        else
-          git commit -m "🤖 Auto-update dashboard timestamp"
+        git config --local user.name "GitHub Action Bot"
+        
+        # 変更があるかチェック
+        if [ -n "$(git status --porcelain)" ]; then
+          git add index.html crawl_results.json
+          git commit -m "🤖 自動更新: $(TZ='Europe/Paris' date '+%Y-%m-%d %H:%M')"
           git push
+          echo "✅ 変更をプッシュしました"
+        else
+          echo "ℹ️ 変更がないためコミットをスキップしました"
         fi
