@@ -1,29 +1,31 @@
 {
-  "last_crawl": "2025-06-24 13:26:21 (パリ時間)",
+  "last_crawl": "2025-06-24 13:37:40 (パリ時間)",
   "total_institutions": 11,
-  "total_publications": 22,
-  "successful_crawls": 11,
+  "total_publications": 20,
+  "successful_crawls": 10,
   "success_rate": "50.0%",
   "results": [
     {
       "institution": "Banca d'Italia",
       "publication": "Financial Stability Report",
-      "url": "https://www.bancaditalia.it/pubblicazioni/rapporto-stabilita/",
-      "status": "⚠️ コンテンツ未確認",
-      "found_terms": [],
+      "url": "https://www.bancaditalia.it/pubblicazioni/rapporto-stabilita/index.html",
+      "status": "✅ 接続成功",
+      "found_terms": [
+        "stabilità"
+      ],
       "latest_date_found": "2025-05-19",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "Banca d'Italia",
       "publication": "Macroeconomic Projections",
-      "url": "https://www.bancaditalia.it/pubblicazioni/bollettino-economico/",
+      "url": "https://www.bancaditalia.it/pubblicazioni/bollettino-economico/index.html",
       "status": "✅ 接続成功",
       "found_terms": [
         "bollettino economico"
       ],
       "latest_date_found": "2025-05-20",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "Banco de España",
@@ -32,11 +34,10 @@
       "status": "✅ 接続成功",
       "found_terms": [
         "financial stability",
-        "estabilidad financiera",
-        "stability report"
+        "estabilidad financiera"
       ],
-      "latest_date_found": "2025-06-20",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "latest_date_found": "2025-11-06",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "Banco de España",
@@ -46,87 +47,75 @@
       "found_terms": [
         "macroeconomic projections"
       ],
-      "latest_date_found": "2025-06-20",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "latest_date_found": "2025-11-06",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "OECD",
       "publication": "Economic Outlook",
-      "url": "https://www.oecd.org/en/publications/oecd-economic-outlook-16097408.html",
-      "status": "❌ HTTP 403",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "url": "https://www.oecd.org/economic-outlook/",
+      "status": "❌ 全URLで接続失敗",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "OECD",
       "publication": "Interim Economic Outlook",
-      "url": "https://www.oecd.org/en/publications/",
-      "status": "❌ HTTP 403",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "url": "https://www.oecd.org/economic-outlook/",
+      "status": "❌ 全URLで接続失敗",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "European Commission",
       "publication": "Economic Forecast",
-      "url": "https://economy-finance.ec.europa.eu/economic-research-and-databases/economic-databases/economic-forecast_en",
-      "status": "❌ HTTP 404",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "url": "https://economy-finance.ec.europa.eu/economic-forecast-and-surveys/economic-forecasts_en",
+      "status": "✅ 接続成功",
+      "found_terms": [
+        "economic forecast",
+        "spring forecast"
+      ],
+      "latest_date_found": "2024-06-23",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "European Commission",
-      "publication": "European Semester Spring Package",
+      "publication": "European Semester",
       "url": "https://commission.europa.eu/business-economy-euro/economic-and-fiscal-policy-coordination/european-semester_en",
       "status": "✅ 接続成功",
       "found_terms": [
         "european semester",
-        "spring package"
+        "spring package",
+        "autumn package"
       ],
-      "latest_date_found": null,
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
-    },
-    {
-      "institution": "European Commission",
-      "publication": "European Semester Autumn Package",
-      "url": "https://commission.europa.eu/business-economy-euro/economic-and-fiscal-policy-coordination/european-semester_en",
-      "status": "✅ 接続成功",
-      "found_terms": [
-        "european semester",
-        "autumn package",
-        "annual growth survey"
-      ],
-      "latest_date_found": null,
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
-    },
-    {
-      "institution": "European Commission",
-      "publication": "Guidance on Fiscal Policy",
-      "url": "https://economy-finance.ec.europa.eu/economic-and-fiscal-governance_en",
-      "status": "✅ 接続成功",
-      "found_terms": [
-        "fiscal policy",
-        "stability and growth pact"
-      ],
-      "latest_date_found": null,
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "latest_date_found": "2025-11-24",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "Banque de France",
       "publication": "Financial Stability Report",
-      "url": "https://www.banque-france.fr/en/publications-and-statistics/publications/financial-stability-report",
-      "status": "❌ HTTP 404",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "url": "https://www.banque-france.fr/en/financial-stability",
+      "status": "✅ 接続成功",
+      "found_terms": [
+        "financial stability",
+        "stabilité financière"
+      ],
+      "latest_date_found": null,
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "Banque de France",
       "publication": "Macroeconomic Projections",
-      "url": "https://www.banque-france.fr/en/publications-and-statistics/publications/macroeconomic-projections",
-      "status": "❌ HTTP 404",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "url": "https://www.banque-france.fr/en/economics/macroeconomic-projections",
+      "status": "❌ 全URLで接続失敗",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "EBA",
       "publication": "ESEP",
-      "url": "https://www.eba.europa.eu/risk-analysis-and-data/european-supervisory-examination-programme-esep",
-      "status": "❌ HTTP 404",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "url": "https://www.eba.europa.eu/publications",
+      "status": "⚠️ コンテンツ未確認",
+      "found_terms": [],
+      "latest_date_found": "2025-06-20",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "EBA",
@@ -137,88 +126,73 @@
         "stress test",
         "eu-wide stress test"
       ],
-      "latest_date_found": "2025-02/31",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "latest_date_found": "2025-02-28",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "IMF",
       "publication": "World Economic Outlook",
       "url": "https://www.imf.org/en/Publications/WEO",
-      "status": "✅ 接続成功",
-      "found_terms": [
-        "world economic outlook",
-        "weo",
-        "global growth"
-      ],
-      "latest_date_found": "2025/04/23",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "status": "❌ 全URLで接続失敗",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "IMF",
       "publication": "Global Financial Stability Report",
       "url": "https://www.imf.org/en/Publications/GFSR",
-      "status": "✅ 接続成功",
-      "found_terms": [
-        "global financial stability",
-        "gfsr",
-        "financial stability"
-      ],
-      "latest_date_found": "2025/04/23",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "status": "❌ 全URLで接続失敗",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "IMF",
       "publication": "Fiscal Monitor",
       "url": "https://www.imf.org/en/Publications/FM",
-      "status": "✅ 接続成功",
-      "found_terms": [
-        "fiscal monitor",
-        "public finances",
-        "fiscal policy"
-      ],
-      "latest_date_found": "2025/04/23",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "status": "❌ 全URLで接続失敗",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "IEA",
       "publication": "World Energy Outlook",
       "url": "https://www.iea.org/reports/world-energy-outlook-2024",
-      "status": "❌ HTTP 403",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "status": "❌ 全URLで接続失敗",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "IEA",
       "publication": "Global Energy Review",
       "url": "https://www.iea.org/reports/global-energy-review-2025",
-      "status": "❌ HTTP 403",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "status": "❌ 全URLで接続失敗",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "Moody's",
-      "publication": "Sovereign Ratings (Portugal, Italy, Spain, France)",
-      "url": "https://www.moodys.com/research-and-ratings/market-segment/sovereign-supranational/-/005005/005005/-/-1/0/-/0/-/-/-/-/-/-/en/global/rra",
-      "status": "⚠️ コンテンツ未確認",
-      "found_terms": [],
-      "latest_date_found": null,
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "publication": "Sovereign Ratings",
+      "url": "https://www.moodys.com/research/sovereigns",
+      "status": "✅ 接続成功",
+      "found_terms": [
+        "rating"
+      ],
+      "latest_date_found": "2025-06-18",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "S&P",
-      "publication": "Sovereign Ratings (Portugal, Italy, Spain, France)",
-      "url": "https://www.spglobal.com/ratings/en/research-insights/topics/sovereigns",
-      "status": "❌ HTTP 404",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "publication": "Sovereign Ratings",
+      "url": "https://www.spglobal.com/ratings/en/research-insights/sovereigns",
+      "status": "❌ 全URLで接続失敗",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     },
     {
       "institution": "Fitch",
-      "publication": "Sovereign Ratings (Portugal, Italy, Spain, France)",
-      "url": "https://www.fitchratings.com/research/sovereigns",
+      "publication": "Sovereign Ratings",
+      "url": "https://www.fitchratings.com/sovereigns",
       "status": "✅ 接続成功",
       "found_terms": [
-        "rating action"
+        "sovereign",
+        "rating"
       ],
-      "latest_date_found": "2025-15-04",
-      "crawled_at": "2025-06-24 13:26:21 (パリ時間)"
+      "latest_date_found": "2025-12-05",
+      "crawled_at": "2025-06-24 13:37:40 (パリ時間)"
     }
   ]
 }
