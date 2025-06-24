@@ -1,5 +1,5 @@
 {
-  "last_crawl": "2025-06-24 14:03:02 (パリ時間)",
+  "last_crawl": "2025-06-24 14:12:33 (パリ時間)",
   "total_institutions": 11,
   "total_publications": 20,
   "successful_crawls": 14,
@@ -14,7 +14,7 @@
         "stabilità"
       ],
       "latest_date_found": "2025-05-19",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "Banca d'Italia",
@@ -25,7 +25,7 @@
         "bollettino economico"
       ],
       "latest_date_found": "2025-05-20",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "Banco de España",
@@ -37,7 +37,7 @@
         "estabilidad financiera"
       ],
       "latest_date_found": "2025-11-06",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "Banco de España",
@@ -48,21 +48,21 @@
         "macroeconomic projections"
       ],
       "latest_date_found": "2025-11-06",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "OECD",
       "publication": "Economic Outlook",
       "url": "https://www.oecd.org/en/publications/oecd-economic-outlook-volume-2025-issue-1_83363382-en.html",
       "status": "❌ 全URLで接続失敗",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "OECD",
       "publication": "Interim Economic Outlook",
       "url": "https://www.oecd.org/en/publications/oecd-economic-outlook-interim-report-march-2025_89af4857-en.html",
       "status": "❌ 全URLで接続失敗",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "European Commission",
@@ -74,7 +74,7 @@
         "spring forecast"
       ],
       "latest_date_found": "2024-06-23",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "European Commission",
@@ -87,7 +87,7 @@
         "autumn package"
       ],
       "latest_date_found": "2025-11-24",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "Banque de France",
@@ -99,14 +99,14 @@
         "stabilité financière"
       ],
       "latest_date_found": null,
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "Banque de France",
       "publication": "Macroeconomic Projections",
       "url": "https://www.banque-france.fr/en/economics/macroeconomic-projections",
       "status": "❌ 全URLで接続失敗",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "EBA",
@@ -115,7 +115,7 @@
       "status": "⚠️ コンテンツ未確認",
       "found_terms": [],
       "latest_date_found": "2025-06-20",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "EBA",
@@ -127,7 +127,7 @@
         "eu-wide stress test"
       ],
       "latest_date_found": "2025-02-28",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "IMF",
@@ -140,7 +140,7 @@
         "april 2025"
       ],
       "latest_date_found": "2025-05-08",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "IMF",
@@ -153,7 +153,7 @@
         "financial stability report"
       ],
       "latest_date_found": "2025-04-23",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "IMF",
@@ -166,21 +166,21 @@
         "fiscal policy"
       ],
       "latest_date_found": "2025-04-23",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "IEA",
       "publication": "World Energy Outlook",
       "url": "https://www.iea.org/analysis?type=report",
       "status": "❌ 全URLで接続失敗",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "IEA",
       "publication": "Global Energy Review",
       "url": "https://www.iea.org/analysis?type=report",
       "status": "❌ 全URLで接続失敗",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "Moody's",
@@ -191,7 +191,7 @@
         "rating"
       ],
       "latest_date_found": "2025-06-18",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "S&P",
@@ -203,7 +203,7 @@
         "rating"
       ],
       "latest_date_found": "2025-06-19",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     },
     {
       "institution": "Fitch",
@@ -215,7 +215,7 @@
         "rating"
       ],
       "latest_date_found": "2025-12-05",
-      "crawled_at": "2025-06-24 14:03:02 (パリ時間)"
+      "crawled_at": "2025-06-24 14:12:33 (パリ時間)"
     }
   ]
 }
