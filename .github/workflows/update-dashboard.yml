@@ -9,7 +9,7 @@ on:
 jobs:
   crawl-and-update:
     runs-on: ubuntu-latest
-    timeout-minutes: 15  # 15分でタイムアウト
+    timeout-minutes: 30  # 30分でタイムアウト（機関数が多いため）
     
     permissions:
       contents: write
@@ -25,9 +25,9 @@ jobs:
         
     - name: Install dependencies
       run: |
-        pip install requests beautifulsoup4 pytz lxml
+        pip install requests beautifulsoup4 pytz lxml feedparser
         
-    - name: Run safe crawler
+    - name: Run comprehensive crawler
       run: |
         python3 -c "
         import requests
@@ -38,6 +38,7 @@ jobs:
         import pytz
         import time
         import sys
+        import feedparser
         
         # パリ時間設定
         paris_tz = pytz.timezone('Europe/Paris')
@@ -48,90 +49,275 @@ jobs:
         # 安全なクローリング設定
         session = requests.Session()
         session.headers.update({
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         })
         
-        # 簡単な機関リスト（段階的に拡張）
+        # Excelファイルに基づく完全な機関リスト
         institutions = [
+            # イタリア中央銀行
             {
-                'name': 'EBA',
-                'url': 'https://www.eba.europa.eu/',
-                'publication': 'ESEP',
-                'search_terms': ['esep', 'supervisory review']
+                'name': 'Banca d\'Italia',
+                'publications': [
+                    {
+                        'title': 'Financial Stability Report',
+                        'url': 'https://www.bancaditalia.it/pubblicazioni/rapporto-stabilita/',
+                        'search_terms': ['financial stability', 'rapporto stabilità', 'stability report']
+                    },
+                    {
+                        'title': 'Macroeconomic Projections',
+                        'url': 'https://www.bancaditalia.it/pubblicazioni/bollettino-economico/',
+                        'search_terms': ['macroeconomic projections', 'proiezioni macroeconomiche', 'bollettino economico']
+                    }
+                ]
             },
+            # スペイン中央銀行
             {
-                'name': 'IMF',
-                'url': 'https://www.imf.org/en/Publications',
-                'publication': 'World Economic Outlook',
-                'search_terms': ['world economic outlook', 'weo']
+                'name': 'Banco de España',
+                'publications': [
+                    {
+                        'title': 'Financial Stability Report',
+                        'url': 'https://www.bde.es/bde/en/secciones/informes/Publicaciones_an/Informe_de_Estab/',
+                        'search_terms': ['financial stability', 'estabilidad financiera', 'stability report']
+                    },
+                    {
+                        'title': 'Macroeconomic Projections',
+                        'url': 'https://www.bde.es/bde/en/secciones/informes/Publicaciones_an/Boletin_Economico/',
+                        'search_terms': ['macroeconomic projections', 'proyecciones macroeconómicas']
+                    }
+                ]
             },
+            # OECD
             {
                 'name': 'OECD',
-                'url': 'https://www.oecd.org/en/publications/',
-                'publication': 'Economic Outlook',
-                'search_terms': ['economic outlook']
+                'publications': [
+                    {
+                        'title': 'Economic Outlook',
+                        'url': 'https://www.oecd.org/en/publications/oecd-economic-outlook-16097408.html',
+                        'search_terms': ['economic outlook', 'interim economic outlook']
+                    },
+                    {
+                        'title': 'Interim Economic Outlook',
+                        'url': 'https://www.oecd.org/en/publications/',
+                        'search_terms': ['interim economic outlook', 'economic outlook']
+                    }
+                ]
+            },
+            # 欧州委員会
+            {
+                'name': 'European Commission',
+                'publications': [
+                    {
+                        'title': 'Economic Forecast',
+                        'url': 'https://economy-finance.ec.europa.eu/economic-research-and-databases/economic-databases/economic-forecast_en',
+                        'search_terms': ['economic forecast', 'spring forecast', 'autumn forecast']
+                    },
+                    {
+                        'title': 'European Semester Spring Package',
+                        'url': 'https://commission.europa.eu/business-economy-euro/economic-and-fiscal-policy-coordination/european-semester_en',
+                        'search_terms': ['european semester', 'spring package', 'country specific recommendations']
+                    },
+                    {
+                        'title': 'European Semester Autumn Package',
+                        'url': 'https://commission.europa.eu/business-economy-euro/economic-and-fiscal-policy-coordination/european-semester_en',
+                        'search_terms': ['european semester', 'autumn package', 'annual growth survey']
+                    },
+                    {
+                        'title': 'Guidance on Fiscal Policy',
+                        'url': 'https://economy-finance.ec.europa.eu/economic-and-fiscal-governance_en',
+                        'search_terms': ['fiscal policy', 'fiscal guidance', 'stability and growth pact']
+                    }
+                ]
+            },
+            # フランス中央銀行
+            {
+                'name': 'Banque de France',
+                'publications': [
+                    {
+                        'title': 'Financial Stability Report',
+                        'url': 'https://www.banque-france.fr/en/publications-and-statistics/publications/financial-stability-report',
+                        'search_terms': ['financial stability', 'rapport stabilité financière']
+                    },
+                    {
+                        'title': 'Macroeconomic Projections',
+                        'url': 'https://www.banque-france.fr/en/publications-and-statistics/publications/macroeconomic-projections',
+                        'search_terms': ['macroeconomic projections', 'projections macroéconomiques']
+                    }
+                ]
+            },
+            # EBA
+            {
+                'name': 'EBA',
+                'publications': [
+                    {
+                        'title': 'ESEP',
+                        'url': 'https://www.eba.europa.eu/risk-analysis-and-data/european-supervisory-examination-programme-esep',
+                        'search_terms': ['esep', 'european supervisory examination programme', 'supervisory examination']
+                    },
+                    {
+                        'title': 'EU-wide Stress Test',
+                        'url': 'https://www.eba.europa.eu/risk-analysis-and-data/eu-wide-stress-testing',
+                        'search_terms': ['stress test', 'eu-wide stress test', 'banking stress test']
+                    }
+                ]
+            },
+            # IMF
+            {
+                'name': 'IMF',
+                'publications': [
+                    {
+                        'title': 'World Economic Outlook',
+                        'url': 'https://www.imf.org/en/Publications/WEO',
+                        'search_terms': ['world economic outlook', 'weo', 'global growth']
+                    },
+                    {
+                        'title': 'Global Financial Stability Report',
+                        'url': 'https://www.imf.org/en/Publications/GFSR',
+                        'search_terms': ['global financial stability', 'gfsr', 'financial stability']
+                    },
+                    {
+                        'title': 'Fiscal Monitor',
+                        'url': 'https://www.imf.org/en/Publications/FM',
+                        'search_terms': ['fiscal monitor', 'public finances', 'fiscal policy']
+                    }
+                ]
+            },
+            # IEA
+            {
+                'name': 'IEA',
+                'publications': [
+                    {
+                        'title': 'World Energy Outlook',
+                        'url': 'https://www.iea.org/reports/world-energy-outlook-2024',
+                        'search_terms': ['world energy outlook', 'weo', 'energy outlook']
+                    },
+                    {
+                        'title': 'Global Energy Review',
+                        'url': 'https://www.iea.org/reports/global-energy-review-2025',
+                        'search_terms': ['global energy review', 'energy review', 'energy data']
+                    }
+                ]
+            },
+            # 格付け機関 - Moody's
+            {
+                'name': 'Moody\'s',
+                'publications': [
+                    {
+                        'title': 'Sovereign Ratings (Portugal, Italy, Spain, France)',
+                        'url': 'https://www.moodys.com/research-and-ratings/market-segment/sovereign-supranational/-/005005/005005/-/-1/0/-/0/-/-/-/-/-/-/en/global/rra',
+                        'search_terms': ['sovereign rating', 'portugal', 'italy', 'spain', 'france', 'rating action']
+                    }
+                ]
+            },
+            # 格付け機関 - S&P
+            {
+                'name': 'S&P',
+                'publications': [
+                    {
+                        'title': 'Sovereign Ratings (Portugal, Italy, Spain, France)',
+                        'url': 'https://www.spglobal.com/ratings/en/research-insights/topics/sovereigns',
+                        'search_terms': ['sovereign rating', 'portugal', 'italy', 'spain', 'france', 'rating action']
+                    }
+                ]
+            },
+            # 格付け機関 - Fitch
+            {
+                'name': 'Fitch',
+                'publications': [
+                    {
+                        'title': 'Sovereign Ratings (Portugal, Italy, Spain, France)',
+                        'url': 'https://www.fitchratings.com/research/sovereigns',
+                        'search_terms': ['sovereign rating', 'portugal', 'italy', 'spain', 'france', 'rating action']
+                    }
+                ]
             }
         ]
         
         results = []
         success_count = 0
+        total_pubs = sum(len(inst['publications']) for inst in institutions)
+        
+        print(f'📊 合計 {len(institutions)} 機関、{total_pubs} 公表物をクローリングします')
         
         for inst in institutions:
-            try:
-                print(f'🔍 {inst[\"name\"]} をクローリング中...')
-                
-                # タイムアウト付きリクエスト
-                response = session.get(inst['url'], timeout=10)
-                if response.status_code == 200:
-                    soup = BeautifulSoup(response.content, 'html.parser')
+            print(f'\\n🏛️  {inst[\"name\"]} をクローリング中...')
+            
+            for pub in inst['publications']:
+                try:
+                    print(f'  📄 {pub[\"title\"]} を確認中...')
                     
-                    # 簡単な検索
-                    found_content = False
-                    for term in inst['search_terms']:
-                        if term.lower() in response.text.lower():
-                            found_content = True
-                            break
+                    # タイムアウト付きリクエスト
+                    response = session.get(pub['url'], timeout=15)
                     
+                    if response.status_code == 200:
+                        soup = BeautifulSoup(response.content, 'html.parser')
+                        
+                        # 検索語でコンテンツを確認
+                        found_content = False
+                        found_terms = []
+                        for term in pub['search_terms']:
+                            if term.lower() in response.text.lower():
+                                found_content = True
+                                found_terms.append(term)
+                        
+                        # 最新の日付を探す
+                        date_pattern = r'20[2-9][0-9][-/][0-1][0-9][-/][0-3][0-9]'
+                        dates = re.findall(date_pattern, response.text)
+                        latest_date = max(dates) if dates else None
+                        
+                        results.append({
+                            'institution': inst['name'],
+                            'publication': pub['title'],
+                            'url': pub['url'],
+                            'status': '✅ 接続成功' if found_content else '⚠️ コンテンツ未確認',
+                            'found_terms': found_terms,
+                            'latest_date_found': latest_date,
+                            'crawled_at': current_time
+                        })
+                        
+                        if found_content:
+                            success_count += 1
+                            print(f'    ✅ 成功 (検出語: {found_terms[:2]})')
+                        else:
+                            print(f'    ⚠️  接続はできたが内容未確認')
+                    else:
+                        results.append({
+                            'institution': inst['name'],
+                            'publication': pub['title'],
+                            'url': pub['url'],
+                            'status': f'❌ HTTP {response.status_code}',
+                            'crawled_at': current_time
+                        })
+                        print(f'    ❌ 失敗: HTTP {response.status_code}')
+                    
+                    # レート制限：各リクエスト間に2秒待機
+                    time.sleep(2)
+                    
+                except Exception as e:
                     results.append({
                         'institution': inst['name'],
-                        'publication': inst['publication'],
-                        'status': '✅ 接続成功' if found_content else '⚠️ コンテンツ未確認',
+                        'publication': pub['title'],
+                        'url': pub['url'],
+                        'status': f'❌ エラー: {str(e)[:100]}',
                         'crawled_at': current_time
                     })
-                    success_count += 1
-                    print(f'✅ {inst[\"name\"]} 完了')
-                else:
-                    results.append({
-                        'institution': inst['name'],
-                        'publication': inst['publication'],
-                        'status': f'❌ HTTP {response.status_code}',
-                        'crawled_at': current_time
-                    })
-                    print(f'❌ {inst[\"name\"]} 失敗: HTTP {response.status_code}')
-                
-                # レート制限：各リクエスト間に3秒待機
-                time.sleep(3)
-                
-            except Exception as e:
-                results.append({
-                    'institution': inst['name'],
-                    'publication': inst['publication'],
-                    'status': f'❌ エラー: {str(e)[:50]}',
-                    'crawled_at': current_time
-                })
-                print(f'❌ {inst[\"name\"]} エラー: {e}')
-                continue
+                    print(f'    ❌ エラー: {e}')
+                    continue
         
         # 結果保存
-        with open('crawl_results.json', 'w', encoding='utf-8') as f:
-            json.dump({
-                'last_crawl': current_time,
-                'total_institutions': len(institutions),
-                'successful_crawls': success_count,
-                'results': results
-            }, f, ensure_ascii=False, indent=2)
+        final_results = {
+            'last_crawl': current_time,
+            'total_institutions': len(institutions),
+            'total_publications': total_pubs,
+            'successful_crawls': success_count,
+            'success_rate': f'{(success_count/total_pubs)*100:.1f}%',
+            'results': results
+        }
         
-        print(f'📊 クローリング完了: {success_count}/{len(institutions)} 成功')
+        with open('crawl_results.json', 'w', encoding='utf-8') as f:
+            json.dump(final_results, f, ensure_ascii=False, indent=2)
+        
+        print(f'\\n📊 クローリング完了: {success_count}/{total_pubs} 成功 ({(success_count/total_pubs)*100:.1f}%)')
+        print(f'📁 結果は crawl_results.json に保存されました')
         "
         
     - name: Update HTML dashboard
@@ -146,10 +332,46 @@ jobs:
           # 既存の更新時刻も置換
           sed -i "s/最終更新: [^<]*/最終更新: $PARIS_TIME/g" index.html
           
-          echo "✅ HTMLダッシュボード更新完了"
+          echo "✅ HTMLダッシュボード更新完了: $PARIS_TIME"
         else
           echo "❌ index.html が見つかりません"
         fi
+        
+    - name: Generate detailed report
+      run: |
+        # クローリング結果から詳細レポートを生成
+        python3 -c "
+        import json
+        from datetime import datetime
+        
+        try:
+            with open('crawl_results.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            print('\\n📊 詳細レポート')
+            print(f'最終実行: {data[\"last_crawl\"]}')
+            print(f'成功率: {data.get(\"success_rate\", \"N/A\")}')
+            print(f'総機関数: {data[\"total_institutions\"]}')
+            print(f'総公表物数: {data[\"total_publications\"]}')
+            print(f'成功数: {data[\"successful_crawls\"]}')
+            
+            print('\\n📋 機関別結果:')
+            institutions = {}
+            for result in data['results']:
+                inst = result['institution']
+                if inst not in institutions:
+                    institutions[inst] = {'success': 0, 'total': 0}
+                institutions[inst]['total'] += 1
+                if '✅' in result['status']:
+                    institutions[inst]['success'] += 1
+            
+            for inst, stats in institutions.items():
+                rate = (stats['success']/stats['total'])*100
+                print(f'  {inst}: {stats[\"success\"]}/{stats[\"total\"]} ({rate:.0f}%)')
+            
+        except Exception as e:
+            print(f'レポート生成エラー: {e}')
+        "
         
     - name: Commit and push changes
       run: |
@@ -159,7 +381,7 @@ jobs:
         # 変更があるかチェック
         if [ -n "$(git status --porcelain)" ]; then
           git add index.html crawl_results.json
-          git commit -m "🤖 自動更新: $(TZ='Europe/Paris' date '+%Y-%m-%d %H:%M')"
+          git commit -m "🤖 自動更新: $(TZ='Europe/Paris' date '+%Y-%m-%d %H:%M') | $(cat crawl_results.json | jq -r '.success_rate // \"N/A\"') 成功率"
           git push
           echo "✅ 変更をプッシュしました"
         else
