@@ -167,27 +167,27 @@ jobs:
                     }
                 ]
             },
-            # OECD（Latest publications页面优先）
+            # OECD（具体的なレポートURL優先）
             {
                 'name': 'OECD',
                 'publications': [
                     {
                         'title': 'Economic Outlook',
                         'urls': [
-                            'https://www.oecd.org/en/publications/serials/oecd-economic-outlook_g1ghgh13.html',
-                            'https://www.oecd.org/en/topics/economic-outlook.html',
-                            'https://www.oecd.org/economic-outlook/'
+                            'https://www.oecd.org/en/publications/oecd-economic-outlook-volume-2025-issue-1_83363382-en.html',
+                            'https://www.oecd.org/en/topics/sub-issues/economic-outlook.html',
+                            'https://www.oecd.org/en/publications/serials/oecd-economic-outlook_g1ghgh13.html'
                         ],
-                        'search_terms': ['economic outlook', 'latest publications', 'growth projections', 'global economy']
+                        'search_terms': ['economic outlook', 'volume 2025 issue 1', 'growth projections', 'global economy']
                     },
                     {
                         'title': 'Interim Economic Outlook',
                         'urls': [
-                            'https://www.oecd.org/en/publications/serials/oecd-economic-outlook_g1ghgh13.html',
                             'https://www.oecd.org/en/publications/oecd-economic-outlook-interim-report-march-2025_89af4857-en.html',
-                            'https://www.oecd.org/en/topics/economic-outlook.html'
+                            'https://www.oecd.org/en/topics/sub-issues/economic-outlook.html',
+                            'https://www.oecd.org/en/publications/serials/oecd-economic-outlook_g1ghgh13.html'
                         ],
-                        'search_terms': ['interim economic outlook', 'latest publications', 'interim outlook', 'march 2025']
+                        'search_terms': ['interim economic outlook', 'interim report', 'march 2025', 'trade barriers']
                     }
                 ]
             },
