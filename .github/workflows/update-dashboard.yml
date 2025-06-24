@@ -1,29 +1,54 @@
 name: Update Publications Dashboard
 
 on:
+  schedule:
+    - cron: '0 5 * * *'
   workflow_dispatch:
 
 jobs:
-  test-update:
+  update-dashboard:
     runs-on: ubuntu-latest
+    timeout-minutes: 10  # 10分でタイムアウト
+    
+    permissions:
+      contents: write
     
     steps:
-    - name: Checkout
+    - name: Checkout repository
       uses: actions/checkout@v3
       
-    - name: Test update
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
       run: |
-        echo "Testing update..."
+        pip install requests beautifulsoup4 pytz
         
-        # 最終更新時刻のみ更新
-        sed -i 's/{{LAST_UPDATE_TIME}}/'"$(date '+%Y-%m-%d %H:%M:%S (パリ時間)')"'/g' index.html
+    - name: Quick update with timestamp
+      run: |
+        echo "Updating dashboard timestamp..."
         
-        echo "Update completed successfully"
+        # 現在時刻を取得（パリ時間）
+        PARIS_TIME=$(TZ='Europe/Paris' date '+%Y-%m-%d %H:%M:%S (パリ時間)')
+        
+        # HTMLファイルの最終更新時刻を更新
+        if [ -f "index.html" ]; then
+          sed -i "s/{{LAST_UPDATE_TIME}}/$PARIS_TIME/g" index.html
+          sed -i "s/最終更新: [^<]*/最終更新: $PARIS_TIME/g" index.html
+        fi
+        
+        echo "Timestamp updated to: $PARIS_TIME"
         
     - name: Commit changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add index.html
-        git diff --staged --quiet || git commit -m "🤖 Test update"
-        git push
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "🤖 Auto-update dashboard timestamp"
+          git push
+        fi
