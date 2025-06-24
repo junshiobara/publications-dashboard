@@ -119,7 +119,7 @@
         <div class="info-bar">
             <strong>監視対象:</strong> 36の重要公表物 |
             <strong>更新:</strong> 毎朝パリ時間7時に自動更新
-            <div class="last-update" id="lastUpdate">最終更新: {{LAST_UPDATE_TIME}}</div>
+            <div class="last-update" id="lastUpdate">最終更新: 2025-06-24 11:08:48 (パリ時間)</div>
         </div>
 
         <table>
@@ -481,7 +481,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // テンプレート変数が置換されていない場合は現在時刻を表示
             const lastUpdateElement = document.getElementById('lastUpdate');
-            if (lastUpdateElement.textContent.includes('{{LAST_UPDATE_TIME}}')) {
+            if (lastUpdateElement.textContent.includes('2025-06-24 11:08:48 (パリ時間)')) {
                 const now = new Date();
                 const parisTime = now.toLocaleString('ja-JP', { 
                     timeZone: 'Europe/Paris',
