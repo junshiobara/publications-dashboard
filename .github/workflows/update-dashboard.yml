@@ -228,14 +228,15 @@ jobs:
                         ],
                         'search_terms': ['financial stability', 'stabilité financière', 'rapport stabilité']
                     },
+                    # Banque de France Macroeconomic Projections代替URL
                     {
                         'title': 'Macroeconomic Projections',
                         'urls': [
+                            'https://www.banque-france.fr/en/publications-and-statistics/publications',
                             'https://www.banque-france.fr/en/economics/macroeconomic-projections',
-                            'https://www.banque-france.fr/economie/projections-macroeconomiques',
-                            'https://www.banque-france.fr/en/publications'
+                            'https://www.banque-france.fr/economie/projections-macroeconomiques'
                         ],
-                        'search_terms': ['macroeconomic projections', 'projections macroéconomiques', 'prévisions']
+                        'search_terms': ['macroeconomic projections', 'projections macroéconomiques', 'prévisions', 'economic bulletin']
                     }
                 ]
             },
@@ -243,14 +244,15 @@ jobs:
             {
                 'name': 'EBA',
                 'publications': [
+                    # EBA ESEP代替URL
                     {
                         'title': 'ESEP',
                         'urls': [
-                            'https://www.eba.europa.eu/supervisory-convergence/supervisory-examination-programme',
                             'https://www.eba.europa.eu/about-us/work-programme',
+                            'https://www.eba.europa.eu/supervisory-convergence/supervisory-examination-programme',
                             'https://www.eba.europa.eu/publications'
                         ],
-                        'search_terms': ['supervisory examination programme', 'esep', 'supervisory priorities']
+                        'search_terms': ['supervisory examination programme', 'esep', 'supervisory priorities', 'work programme']
                     },
                     {
                         'title': 'EU-wide Stress Test',
@@ -296,25 +298,25 @@ jobs:
                     }
                 ]
             },
-            # IEA（レポート一覧页面优先）
+            # IEA（直接URL優先）
             {
                 'name': 'IEA',
                 'publications': [
                     {
                         'title': 'World Energy Outlook',
                         'urls': [
-                            'https://www.iea.org/analysis?type=report',
                             'https://www.iea.org/reports/world-energy-outlook-2024',
-                            'https://www.iea.org/weo'
+                            'https://www.iea.org/weo',
+                            'https://www.iea.org/analysis?type=report'
                         ],
                         'search_terms': ['world energy outlook', 'weo', 'energy scenarios', 'age of electricity', '2024']
                     },
                     {
                         'title': 'Global Energy Review',
                         'urls': [
-                            'https://www.iea.org/analysis?type=report',
                             'https://www.iea.org/reports/global-energy-review-2025',
-                            'https://www.iea.org/reports/global-energy-review'
+                            'https://www.iea.org/reports/global-energy-review',
+                            'https://www.iea.org/analysis?type=report'
                         ],
                         'search_terms': ['global energy review', 'energy statistics', 'co2 emissions', 'energy data', '2025']
                     }
@@ -374,8 +376,14 @@ jobs:
             for pub in inst['publications']:
                 print(f'  📄 {pub[\"title\"]} を確認中...')
                 
-                # 複数URLを試行
+                # 複数URLを試行（リトライ機能追加）
                 response, successful_url = try_multiple_urls(pub['urls'], pub['title'], inst['name'])
+                
+                # 失敗した場合のリトライ（OECD, IEA対策）
+                if not response and inst['name'] in ['OECD', 'IEA']:
+                    print(f'    🔄 {inst[\"name\"]} リトライ中...')
+                    time.sleep(5)  # 5秒待機
+                    response, successful_url = try_multiple_urls(pub['urls'], pub['title'], inst['name'])
                 
                 if response:
                     try:
