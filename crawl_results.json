@@ -1,5 +1,5 @@
 {
-  "last_crawl": "2025-09-11 07:23:16 (パリ時間)",
+  "last_crawl": "2025-09-12 07:22:18 (パリ時間)",
   "total_institutions": 11,
   "total_publications": 20,
   "successful_crawls": 18,
@@ -14,7 +14,7 @@
         "stabilità"
       ],
       "latest_date_found": "2025-05-19",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "Banca d'Italia",
@@ -25,7 +25,7 @@
         "bollettino economico"
       ],
       "latest_date_found": "2025-07-11",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "Banco de España",
@@ -36,7 +36,7 @@
         "financial stability"
       ],
       "latest_date_found": "2025-10-09",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "Banco de España",
@@ -47,7 +47,7 @@
         "macroeconomic projections"
       ],
       "latest_date_found": "2025-10-09",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "OECD",
@@ -59,7 +59,7 @@
         "volume 2025 issue 1"
       ],
       "latest_date_found": "2025-06-15",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "OECD",
@@ -71,7 +71,7 @@
         "march 2025"
       ],
       "latest_date_found": "2025-03-17",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "European Commission",
@@ -83,7 +83,7 @@
         "spring forecast"
       ],
       "latest_date_found": "2024-09-23",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "European Commission",
@@ -95,8 +95,8 @@
         "spring package",
         "autumn package"
       ],
-      "latest_date_found": "2025-11-11",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "latest_date_found": "2025-11-12",
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "Banque de France",
@@ -108,7 +108,7 @@
         "stabilité financière"
       ],
       "latest_date_found": null,
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "Banque de France",
@@ -120,7 +120,7 @@
         "economic bulletin"
       ],
       "latest_date_found": null,
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "EBA",
@@ -129,14 +129,14 @@
       "status": "⚠️ コンテンツ未確認",
       "found_terms": [],
       "latest_date_found": "2025-09-22",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "EBA",
       "publication": "EU-wide Stress Test",
       "url": "https://www.eba.europa.eu/risk-analysis-and-data/eu-wide-stress-testing",
       "status": "❌ 全URLで接続失敗",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "IMF",
@@ -149,7 +149,7 @@
         "april 2025"
       ],
       "latest_date_found": "2025-08-14",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "IMF",
@@ -162,7 +162,7 @@
         "financial stability report"
       ],
       "latest_date_found": "2025-07-29",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "IMF",
@@ -175,7 +175,7 @@
         "fiscal policy"
       ],
       "latest_date_found": "2025-07-29",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "IEA",
@@ -187,7 +187,7 @@
         "age of electricity"
       ],
       "latest_date_found": "2024-10-15",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "IEA",
@@ -199,7 +199,7 @@
         "co2 emissions"
       ],
       "latest_date_found": "2025-03-20",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "Moody's",
@@ -210,7 +210,7 @@
         "rating"
       ],
       "latest_date_found": "2025-09-03",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "S&P",
@@ -222,7 +222,7 @@
         "rating"
       ],
       "latest_date_found": "2025-04-14",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     },
     {
       "institution": "Fitch",
@@ -234,7 +234,7 @@
         "rating"
       ],
       "latest_date_found": "2025-10-02",
-      "crawled_at": "2025-09-11 07:23:16 (パリ時間)"
+      "crawled_at": "2025-09-12 07:22:18 (パリ時間)"
     }
   ]
 }
